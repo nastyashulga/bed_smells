@@ -2,6 +2,7 @@ from classes import Shop, Store, Request
 from storages_exceptions import BaseError
 
 
+# main func
 def main():
     shop_1 = Shop(items={'картошка': 1, 'морковка': 2, 'лук': 3, 'помидор': 3, 'огурец': 2})
     store_1 = Store(items={'диск': 1, 'кассета': 2, 'дискета': 3})
@@ -22,7 +23,7 @@ def main():
             destination = departments[user_req.destination]
             departure = departments[user_req.departure]
 
-            departure.remove(user_req.product, user_req.amount)
+            departure.remove(user_req.product, user_req.amount, departure)
             destination.add(user_req.product, user_req.amount)
 
             print(f'Курьер забрал {user_req.amount} {user_req.product} со {departure}')

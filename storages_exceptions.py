@@ -1,3 +1,4 @@
+# all errors' description
 class BaseError(Exception):
     message = 'Неизвестная ошибка'
 
@@ -24,4 +25,6 @@ class InvalidRequestError(BaseError):
 
 class UnknownStorageError(BaseError):
     message = 'Неизвестный пункт'
+
+
 

@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
 from storages_exceptions import NotEnoughSpaceError, UnknownItemError, NotEnoughItemError, MoreThanFiveUniquesError, \
-    InvalidRequestError, UnknownStorageError
+    UnknownStorageError
 
 
+# create an abstract Class
 class Storage(ABC):
     def __init__(self, items):
         self._items = items
@@ -16,7 +17,7 @@ class Storage(ABC):
         pass
 
     @abstractmethod
-    def remove(self, name, amount):
+    def remove(self, name, amount, storage):
         pass
 
     @abstractmethod
@@ -32,6 +33,7 @@ class Storage(ABC):
         pass
 
 
+# create a Store class
 class Store(Storage):
     def __init__(self, items):
         super().__init__(items)
@@ -45,10 +47,13 @@ class Store(Storage):
             self._items[name] = self._items.get(name, 0) + amount
             self._capacity -= amount
 
-        elif amount > self._capacity:
+    def remove(self, name, amount, storage):
+        if amount > storage.get_free_space():
             raise NotEnoughSpaceError
 
-    def remove(self, name, amount):
+        if storage == 'магазин' and storage.get_unique_items_count() >= 5:
+            raise MoreThanFiveUniquesError
+
         if name not in self._items:
             raise UnknownItemError
 
@@ -71,6 +76,7 @@ class Store(Storage):
         return len(self.get_items())
 
 
+# Create a Shop class
 class Shop(Storage):
     def __init__(self, items):
         super().__init__(items)
@@ -80,18 +86,18 @@ class Shop(Storage):
         return 'магазин'
 
     def add(self, name, amount):
-        if self.get_unique_items_count() >= 5:
+
+        self._items[name] = self._items.get(name, 0) + amount
+        self._capacity -= amount
+
+
+    def remove(self, name, amount, storage):
+        if amount > storage.get_free_space():
+            raise NotEnoughSpaceError
+
+        if storage == 'магазин' and storage.get_unique_items_count() >= 5:
             raise MoreThanFiveUniquesError
 
-        else:
-            if amount <= self._capacity:
-                self._items[name] = self._items.get(name, 0) + amount
-                self._capacity -= amount
-
-            elif amount > self._capacity:
-                raise NotEnoughSpaceError
-
-    def remove(self, name, amount):
         if name not in self._items:
             raise UnknownItemError
 
@@ -114,6 +120,7 @@ class Shop(Storage):
         return len(self._items)
 
 
+# create a Request class
 class Request:
     def __init__(self, user_string, list_of_shops):
         request_split = user_string.split(' ')
@@ -125,4 +132,3 @@ class Request:
 
         if self.destination not in list_of_shops or self.departure not in list_of_shops:
             raise UnknownStorageError
-
