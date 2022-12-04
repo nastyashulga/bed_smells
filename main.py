@@ -1,4 +1,6 @@
-from classes import Shop, Store, Request
+from shop import Shop
+from store import Store
+from request import Request
 from storages_exceptions import BaseError
 
 
